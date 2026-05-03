@@ -7,12 +7,12 @@ import { animate } from 'popmotion'
 // y reemplaza los objetos `src: null` con `src: './assets/images/foto1.jpg'`
 // El campo `caption` es el texto manuscrito bajo cada foto.
 const PHOTOS = [
-  { src: null, caption: 'Siempre sonriendo' },
-  { src: null, caption: 'Un día inolvidable' },
-  { src: null, caption: 'Luz y alegría' },
-  { src: null, caption: 'Momentos únicos' },
-  { src: null, caption: 'Juntos siempre' },
-  { src: null, caption: 'Recuerdos dorados' },
+  { src: null, caption: 'fotos que habría si me mandaras ush' },
+  { src: null, caption: 'fotos que habría si me mandaras ush' },
+  { src: null, caption: 'fotos que habría si me mandaras ush' },
+  { src: null, caption: 'fotos que habría si me mandaras ush' },
+  { src: null, caption: 'fotos que habría si me mandaras ush' },
+  { src: null, caption: 'fotos que habría si me mandaras ush' },
 ]
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -45,16 +45,18 @@ export function init() {
     } else {
       const placeholder = document.createElement('div')
       placeholder.className = 'polaroid-placeholder'
-      placeholder.innerHTML = `${PLACEHOLDER_SVG}<span>Añadir foto</span>`
+      placeholder.innerHTML = `${PLACEHOLDER_SVG}<span>${photo.caption}</span>`
       imgWrap.appendChild(placeholder)
     }
 
+    card.appendChild(imgWrap)
+
+    // Caption debajo del polaroid
     const caption = document.createElement('p')
     caption.className = 'polaroid-caption'
-    caption.textContent = photo.caption
-
-    card.appendChild(imgWrap)
+    caption.textContent = photo.src ? photo.caption : 'ush'
     card.appendChild(caption)
+
     grid.appendChild(card)
   })
 }

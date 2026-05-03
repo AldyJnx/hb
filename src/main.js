@@ -4,18 +4,18 @@ import './styles/main.css'
 
 // ─── PERSONALIZACIÓN ────────────────────────────────────────────────────────
 // ← Cambia estos valores para personalizar la página
-const BIRTHDAY_PERSON_NAME = 'Nombre'   // ← Nombre real de la persona
-const BIRTHDAY_AGE         = 25         // ← Edad que cumple
+const BIRTHDAY_PERSON_NAME = 'Gracia'   // ← Nombre real de la persona
+const BIRTHDAY_AGE         = 20         // ← Edad que cumple
 
 const MESSAGES_ARRAY = [
-  'Cada día contigo es un regalo.',
-  'Tu sonrisa ilumina hasta el día más gris.',
-  'Eres la prueba de que la magia existe.',
-  'Que este año esté lleno de todos tus sueños.',
+  'Hay muchas cosas cursis que podria decirte pero te odio mucho <3',
+  'Niña tontaaaaa',
+  'Eres la prueba de porque deberiamos extinguirnos <3',
+  'Logra todos tus metas tontitaaa',
 ]
 
-const WISH_TEXT  = 'Que todos tus deseos se hagan realidad.'
-const SIGNATURE  = 'Con todo mi cariño'        // ← Aparece como firma manuscrita
+const WISH_TEXT  = 'Que todas tus pesadillas se hagan realidad <3'
+const SIGNATURE  = 'Con todo mi cariño aunque no peuda decirtelo facilmente en persona'        // ← Aparece como firma manuscrita
 // ─────────────────────────────────────────────────────────────────────────────
 
 // Componentes

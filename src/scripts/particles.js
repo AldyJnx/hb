@@ -1,4 +1,4 @@
-// Partículas flotantes en canvas: lazos y corazones en el fondo
+// Partículas flotantes en canvas: lazos, corazones, estrellas y puntos decorativos
 
 export function init() {
   const canvas = document.getElementById('particles-canvas')
@@ -7,7 +7,9 @@ export function init() {
   const ctx = canvas.getContext('2d')
   let particles = []
   let animFrame
-  const COUNT = window.innerWidth < 640 ? 18 : 30
+
+  const isMobile = window.innerWidth < 640
+  const COUNT    = isMobile ? 28 : 50
 
   function resize() {
     canvas.width  = window.innerWidth
@@ -17,110 +19,121 @@ export function init() {
   resize()
   window.addEventListener('resize', () => {
     resize()
-    // Reposicionar partículas al cambiar tamaño
     particles.forEach(p => {
       if (p.x > canvas.width)  p.x = Math.random() * canvas.width
       if (p.y > canvas.height) p.y = Math.random() * canvas.height
     })
   })
 
-  // Colores de las partículas (transparentes y sutiles)
   const colors = [
-    'rgba(244, 182, 194, 0.35)',  // rose-deep
-    'rgba(212, 175, 127, 0.25)',  // champagne
-    'rgba(255, 228, 233, 0.45)',  // rose-soft
-    'rgba(139, 123, 130, 0.20)',  // whisper
+    'rgba(244, 182, 194, 0.40)',   // rose-deep
+    'rgba(249, 205, 214, 0.35)',   // rose-mid
+    'rgba(212, 175, 127, 0.28)',   // champagne
+    'rgba(237, 217, 176, 0.30)',   // champagne-light
+    'rgba(255, 228, 233, 0.50)',   // rose-soft
+    'rgba(139, 123, 130, 0.18)',   // whisper
+    'rgba(255, 249, 250, 0.40)',   // pearl
   ]
 
-  // Tipos de partículas
-  const TYPES = ['bow', 'heart', 'dot']
+  const TYPES = ['bow', 'heart', 'dot', 'star', 'ring']
 
-  function createParticle() {
+  function createParticle(spawnY = null) {
     return {
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      size: Math.random() * 10 + 4,
-      color: colors[Math.floor(Math.random() * colors.length)],
-      type: TYPES[Math.floor(Math.random() * TYPES.length)],
-      vx: (Math.random() - 0.5) * 0.25,
-      vy: -(Math.random() * 0.3 + 0.1),
+      x:        Math.random() * canvas.width,
+      y:        spawnY !== null ? spawnY : Math.random() * canvas.height,
+      size:     Math.random() * 11 + 3,
+      color:    colors[Math.floor(Math.random() * colors.length)],
+      type:     TYPES[Math.floor(Math.random() * TYPES.length)],
+      vx:       (Math.random() - 0.5) * 0.22,
+      vy:       -(Math.random() * 0.28 + 0.08),
       rotation: Math.random() * Math.PI * 2,
-      rotSpeed: (Math.random() - 0.5) * 0.012,
-      opacity: Math.random() * 0.5 + 0.2,
-      phase: Math.random() * Math.PI * 2,
+      rotSpeed: (Math.random() - 0.5) * 0.014,
+      opacity:  Math.random() * 0.55 + 0.15,
+      phase:    Math.random() * Math.PI * 2,
+      wobble:   Math.random() * 1.8 + 0.6,
     }
   }
 
   for (let i = 0; i < COUNT; i++) particles.push(createParticle())
 
-  // Dibuja un lazo pequeño
-  function drawBow(ctx, x, y, size, rotation) {
+  // ─── Dibujadores ───────────────────────────────────────────────────────────
+
+  function drawBow(ctx, x, y, s, rot) {
     ctx.save()
     ctx.translate(x, y)
-    ctx.rotate(rotation)
-
-    const s = size * 0.55
+    ctx.rotate(rot)
+    const r = s * 0.5
     ctx.beginPath()
-    // Ala izquierda
     ctx.moveTo(0, 0)
-    ctx.bezierCurveTo(-s * 0.8, -s * 0.9, -s * 2.2, -s * 0.6, -s * 2.4, 0)
-    ctx.bezierCurveTo(-s * 2.2, s * 0.6, -s * 0.8, s * 0.9, 0, 0)
-    // Ala derecha
+    ctx.bezierCurveTo(-r * 0.7, -r * 0.9, -r * 2.1, -r * 0.55, -r * 2.3, 0)
+    ctx.bezierCurveTo(-r * 2.1, r * 0.55, -r * 0.7, r * 0.9, 0, 0)
     ctx.moveTo(0, 0)
-    ctx.bezierCurveTo(s * 0.8, -s * 0.9, s * 2.2, -s * 0.6, s * 2.4, 0)
-    ctx.bezierCurveTo(s * 2.2, s * 0.6, s * 0.8, s * 0.9, 0, 0)
+    ctx.bezierCurveTo(r * 0.7, -r * 0.9, r * 2.1, -r * 0.55, r * 2.3, 0)
+    ctx.bezierCurveTo(r * 2.1, r * 0.55, r * 0.7, r * 0.9, 0, 0)
     ctx.fillStyle = ctx.strokeStyle
     ctx.fill()
-
-    // Nudo central
     ctx.beginPath()
-    ctx.arc(0, 0, s * 0.5, 0, Math.PI * 2)
+    ctx.arc(0, 0, r * 0.46, 0, Math.PI * 2)
     ctx.fill()
-
     ctx.restore()
   }
 
-  // Dibuja un corazón pequeño
-  function drawHeart(ctx, x, y, size, rotation) {
+  function drawHeart(ctx, x, y, s, rot) {
     ctx.save()
     ctx.translate(x, y)
-    ctx.rotate(rotation)
-    ctx.scale(size * 0.04, size * 0.04)
-
+    ctx.rotate(rot)
+    const sc = s * 0.042
+    ctx.scale(sc, sc)
     ctx.beginPath()
     ctx.moveTo(0, -5)
-    ctx.bezierCurveTo(5, -12, 14, -6, 14, 0)
-    ctx.bezierCurveTo(14, 7, 0, 14, 0, 16)
-    ctx.bezierCurveTo(0, 14, -14, 7, -14, 0)
-    ctx.bezierCurveTo(-14, -6, -5, -12, 0, -5)
+    ctx.bezierCurveTo(5, -13, 14, -7, 14, 0)
+    ctx.bezierCurveTo(14, 8, 0, 15, 0, 17)
+    ctx.bezierCurveTo(0, 15, -14, 8, -14, 0)
+    ctx.bezierCurveTo(-14, -7, -5, -13, 0, -5)
     ctx.fillStyle = ctx.strokeStyle
     ctx.fill()
-
     ctx.restore()
   }
 
-  function draw(p, t) {
-    const wobble = Math.sin(t * 0.001 + p.phase) * 1.5
-    const alpha = p.opacity * (0.7 + 0.3 * Math.sin(t * 0.0008 + p.phase))
-
-    ctx.globalAlpha = alpha
-    ctx.fillStyle   = p.color
-    ctx.strokeStyle = p.color
-
-    if (p.type === 'bow') {
-      drawBow(ctx, p.x + wobble, p.y, p.size, p.rotation)
-    } else if (p.type === 'heart') {
-      drawHeart(ctx, p.x + wobble, p.y, p.size, p.rotation)
-    } else {
-      ctx.beginPath()
-      ctx.arc(p.x + wobble, p.y, p.size * 0.4, 0, Math.PI * 2)
-      ctx.fill()
+  function drawStar(ctx, x, y, s, rot) {
+    ctx.save()
+    ctx.translate(x, y)
+    ctx.rotate(rot)
+    const r1 = s * 0.5, r2 = s * 0.22
+    ctx.beginPath()
+    for (let i = 0; i < 5; i++) {
+      const a1 = (i * 2 * Math.PI) / 5 - Math.PI / 2
+      const a2 = a1 + Math.PI / 5
+      ctx.lineTo(Math.cos(a1) * r1, Math.sin(a1) * r1)
+      ctx.lineTo(Math.cos(a2) * r2, Math.sin(a2) * r2)
     }
-
-    ctx.globalAlpha = 1
+    ctx.closePath()
+    ctx.fillStyle = ctx.strokeStyle
+    ctx.fill()
+    ctx.restore()
   }
 
-  let lastTime = 0
+  function drawRing(ctx, x, y, s, rot) {
+    ctx.save()
+    ctx.translate(x, y)
+    ctx.rotate(rot)
+    ctx.beginPath()
+    ctx.arc(0, 0, s * 0.44, 0, Math.PI * 2)
+    ctx.strokeStyle = ctx.fillStyle
+    ctx.lineWidth = s * 0.12
+    ctx.stroke()
+    ctx.restore()
+  }
+
+  function drawDot(ctx, x, y, s) {
+    ctx.beginPath()
+    ctx.arc(x, y, s * 0.35, 0, Math.PI * 2)
+    ctx.fillStyle = ctx.strokeStyle
+    ctx.fill()
+  }
+
+  // ─── Loop principal ────────────────────────────────────────────────────────
+
   function loop(t) {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
@@ -129,19 +142,36 @@ export function init() {
       p.y += p.vy
       p.rotation += p.rotSpeed
 
-      // Wrap alrededor del canvas
-      if (p.y < -20)             p.y = canvas.height + 20
-      if (p.x < -20)             p.x = canvas.width + 20
+      // Respawn al salir por arriba
+      if (p.y < -20) {
+        Object.assign(p, createParticle(canvas.height + 20))
+        p.y = canvas.height + 20
+      }
+      if (p.x < -20)             p.x = canvas.width  + 20
       if (p.x > canvas.width + 20) p.x = -20
 
-      draw(p, t)
+      const wobbleX = Math.sin(t * 0.0009 + p.phase) * p.wobble
+      const alpha   = p.opacity * (0.65 + 0.35 * Math.sin(t * 0.0006 + p.phase))
+
+      ctx.globalAlpha = alpha
+      ctx.fillStyle   = p.color
+      ctx.strokeStyle = p.color
+
+      const px = p.x + wobbleX
+
+      switch (p.type) {
+        case 'bow':   drawBow  (ctx, px, p.y, p.size, p.rotation); break
+        case 'heart': drawHeart(ctx, px, p.y, p.size, p.rotation); break
+        case 'star':  drawStar (ctx, px, p.y, p.size, p.rotation); break
+        case 'ring':  drawRing (ctx, px, p.y, p.size, p.rotation); break
+        default:      drawDot  (ctx, px, p.y, p.size);              break
+      }
     })
 
+    ctx.globalAlpha = 1
     animFrame = requestAnimationFrame(loop)
   }
 
   animFrame = requestAnimationFrame(loop)
-
-  // Limpiar en navegación SPA (por si acaso)
   return () => cancelAnimationFrame(animFrame)
 }
