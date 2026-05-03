@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Una celebración especial de cumpleaños" />
+  <meta name="robots" content="noindex" />
+  <title>Feliz Cumpleaños ✨</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <!-- Fuentes: Playfair Display, Inter, Caveat -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Inter:wght@300;400;500&family=Caveat:wght@500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- Cursor personalizado -->
+  <div id="cursor-dot"  aria-hidden="true"></div>
+  <div id="cursor-ring" aria-hidden="true"></div>
+
+  <!-- Canvas de partículas flotantes -->
+  <canvas id="particles-canvas" aria-hidden="true"></canvas>
+
+  <!-- Intro overlay con lazo animado -->
+  <div id="intro-overlay" role="status" aria-label="Cargando…">
+    <div class="intro-bow"></div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════
+       SECCIÓN 1 · HERO
+  ════════════════════════════════════════════════════════ -->
+  <section id="hero" class="section-hero">
+    <div class="hero-content">
+      <div class="hero-bow-top" aria-hidden="true"></div>
+      <h1 class="hero-name" aria-label="Nombre de cumpleaños"></h1>
+      <p class="hero-subtitle">
+        <span class="subtitle-text"></span>
+      </p>
+      <p class="hero-age" aria-label="Edad"><span class="age-number"></span></p>
+    </div>
+    <div class="scroll-indicator" aria-hidden="true">
+      <div class="scroll-line"></div>
+      <span class="scroll-text">Desliza</span>
+    </div>
+  </section>
+
+  <!-- Divisor 1 -->
+  <div class="section-divider" aria-hidden="true">
+    <svg viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg"
+         style="color:var(--rose-deep)">
+      <line x1="0" y1="30" x2="70" y2="30" stroke="currentColor" stroke-width="0.8" stroke-dasharray="2 4"/>
+      <line x1="130" y1="30" x2="200" y2="30" stroke="currentColor" stroke-width="0.8" stroke-dasharray="2 4"/>
+      <path d="M100,30 C95,20 76,14 70,21 C65,27 72,36 100,30 Z"
+        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <path d="M100,30 C105,20 124,14 130,21 C135,27 128,36 100,30 Z"
+        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <circle cx="100" cy="30" r="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
+      <path d="M97,33 C94,39 91,43 93,46" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      <path d="M103,33 C106,39 109,43 107,46" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════
+       SECCIÓN 2 · TIMELINE
+  ════════════════════════════════════════════════════════ -->
+  <section id="timeline" class="section-timeline">
+    <div class="timeline-sticky">
+      <div class="timeline-inner">
+        <div class="timeline-number-wrap">
+          <span class="timeline-number" id="timeline-counter">0</span>
+          <span class="timeline-unit">años</span>
+        </div>
+        <div class="timeline-messages">
+          <p class="timeline-msg" data-index="0">de risas compartidas</p>
+          <p class="timeline-msg" data-index="1">de momentos únicos</p>
+          <p class="timeline-msg" data-index="2">de historia y recuerdos</p>
+          <p class="timeline-msg" data-index="3">de amor y alegría</p>
+        </div>
+        <div class="timeline-deco" aria-hidden="true">
+          <div class="deco-line left"></div>
+          <div class="deco-dot"></div>
+          <div class="deco-line right"></div>
+        </div>
+      </div>
+    </div>
+    <div class="timeline-scroll-space"></div>
+  </section>
+
+  <!-- Divisor 2 -->
+  <div class="section-divider" aria-hidden="true">
+    <svg viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg"
+         style="color:var(--whisper-light)">
+      <line x1="0" y1="30" x2="70" y2="30" stroke="currentColor" stroke-width="0.8" stroke-dasharray="2 4"/>
+      <line x1="130" y1="30" x2="200" y2="30" stroke="currentColor" stroke-width="0.8" stroke-dasharray="2 4"/>
+      <path d="M100,30 C95,20 76,14 70,21 C65,27 72,36 100,30 Z"
+        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <path d="M100,30 C105,20 124,14 130,21 C135,27 128,36 100,30 Z"
+        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <circle cx="100" cy="30" r="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
+      <path d="M97,33 C94,39 91,43 93,46" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      <path d="M103,33 C106,39 109,43 107,46" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════
+       SECCIÓN 3 · GALERÍA
+  ════════════════════════════════════════════════════════ -->
+  <section id="gallery" class="section-gallery">
+    <div class="gallery-header">
+      <h2 class="gallery-title">Momentos que atesoro</h2>
+      <p class="gallery-subtitle">Una pequeña muestra de grandes recuerdos</p>
+    </div>
+    <div class="gallery-grid">
+      <!-- Las polaroids se inyectan desde gallery.js -->
+    </div>
+  </section>
+
+  <!-- Divisor 3 -->
+  <div class="section-divider" aria-hidden="true">
+    <svg viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg"
+         style="color:var(--champagne-light)">
+      <line x1="0" y1="30" x2="70" y2="30" stroke="currentColor" stroke-width="0.8" stroke-dasharray="2 4"/>
+      <line x1="130" y1="30" x2="200" y2="30" stroke="currentColor" stroke-width="0.8" stroke-dasharray="2 4"/>
+      <path d="M100,30 C95,20 76,14 70,21 C65,27 72,36 100,30 Z"
+        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <path d="M100,30 C105,20 124,14 130,21 C135,27 128,36 100,30 Z"
+        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <circle cx="100" cy="30" r="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
+      <path d="M97,33 C94,39 91,43 93,46" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      <path d="M103,33 C106,39 109,43 107,46" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════
+       SECCIÓN 4 · MENSAJES
+  ════════════════════════════════════════════════════════ -->
+  <section id="messages" class="section-messages">
+    <div class="messages-container">
+      <!-- Los mensajes se inyectan desde messages-section.js -->
+    </div>
+  </section>
+
+  <!-- Divisor 4 -->
+  <div class="section-divider" aria-hidden="true">
+    <svg viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg"
+         style="color:var(--rose-deep)">
+      <line x1="0" y1="30" x2="70" y2="30" stroke="currentColor" stroke-width="0.8" stroke-dasharray="2 4"/>
+      <line x1="130" y1="30" x2="200" y2="30" stroke="currentColor" stroke-width="0.8" stroke-dasharray="2 4"/>
+      <path d="M100,30 C95,20 76,14 70,21 C65,27 72,36 100,30 Z"
+        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <path d="M100,30 C105,20 124,14 130,21 C135,27 128,36 100,30 Z"
+        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <circle cx="100" cy="30" r="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
+      <path d="M97,33 C94,39 91,43 93,46" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      <path d="M103,33 C106,39 109,43 107,46" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════
+       SECCIÓN 5 · DESEO / PASTEL
+  ════════════════════════════════════════════════════════ -->
+  <section id="wish" class="section-wish">
+    <div class="wish-content">
+      <p class="wish-instruction">Sopla las velas y pide un deseo</p>
+      <div class="cake-container" id="cake-container">
+        <!-- El pastel SVG se inyecta desde wish.js -->
+      </div>
+      <div class="wish-text-wrap" id="wish-reveal" aria-live="polite">
+        <p class="wish-text"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════
+       SECCIÓN 6 · FIRMA / FOOTER
+  ════════════════════════════════════════════════════════ -->
+  <footer id="footer" class="section-footer">
+    <div class="footer-content">
+      <div class="footer-bow" aria-hidden="true"></div>
+      <p class="footer-message">Con todo el amor del mundo</p>
+      <p class="footer-signature"></p>
+      <div class="footer-hearts" aria-hidden="true">
+        <span>♡</span>
+        <span>♡</span>
+        <span>♡</span>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

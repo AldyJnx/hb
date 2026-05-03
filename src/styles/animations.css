@@ -1,0 +1,125 @@
+/* Keyframes CSS y clases de animación reutilizables */
+
+/* Respeta la preferencia del sistema para movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ─── Keyframes ─── */
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%       { transform: translateY(-12px) rotate(3deg); }
+}
+
+@keyframes floatAlt {
+  0%, 100% { transform: translateY(-6px) rotate(-2deg); }
+  50%       { transform: translateY(6px) rotate(2deg); }
+}
+
+@keyframes flame-flicker {
+  0%, 100% { transform: scaleX(1) scaleY(1) rotate(-1deg); opacity: 1; }
+  25%      { transform: scaleX(0.9) scaleY(1.06) rotate(1deg); opacity: 0.92; }
+  50%      { transform: scaleX(1.08) scaleY(0.94) rotate(-2deg); opacity: 1; }
+  75%      { transform: scaleX(0.95) scaleY(1.04) rotate(1deg); opacity: 0.95; }
+}
+
+@keyframes smoke-rise {
+  0%   { opacity: 0.6; transform: translateY(0) scaleX(1); }
+  100% { opacity: 0; transform: translateY(-30px) scaleX(2); }
+}
+
+@keyframes gradient-shift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(244, 182, 194, 0); }
+  50%       { box-shadow: 0 0 0 8px rgba(244, 182, 194, 0.2); }
+}
+
+@keyframes scroll-bounce {
+  0%, 100% { transform: translateY(0); opacity: 1; }
+  50%       { transform: translateY(8px); opacity: 0.5; }
+}
+
+@keyframes heart-beat {
+  0%, 100% { transform: scale(1); }
+  25%       { transform: scale(1.15); }
+  50%       { transform: scale(0.95); }
+  75%       { transform: scale(1.05); }
+}
+
+@keyframes path-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes blur-in {
+  from { opacity: 0; filter: blur(8px); }
+  to   { opacity: 1; filter: blur(0); }
+}
+
+/* ─── Clases utilitarias de animación ─── */
+
+.animate-float      { animation: float 6s ease-in-out infinite; }
+.animate-float-alt  { animation: floatAlt 8s ease-in-out infinite; }
+.animate-fade-up    { animation: fade-up var(--duration-slow) var(--ease-out) both; }
+.animate-blur-in    { animation: blur-in var(--duration-slow) var(--ease-out) both; }
+.animate-scroll     { animation: scroll-bounce 2s ease-in-out infinite; }
+
+/* Estado inicial para animaciones con JS */
+.anim-hidden {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.anim-hidden-left {
+  opacity: 0;
+  transform: translateX(-40px);
+}
+
+.anim-hidden-right {
+  opacity: 0;
+  transform: translateX(40px);
+}
+
+/* SVG path drawing setup */
+.svg-draw path,
+.svg-draw circle {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+}
+
+/* Flame animation */
+.candle-flame {
+  transform-origin: center bottom;
+  animation: flame-flicker 1.8s ease-in-out infinite;
+}
+
+.candle-flame:nth-child(odd) {
+  animation-duration: 2.1s;
+  animation-delay: -0.4s;
+}
+
+/* Smoke */
+.candle-smoke {
+  transform-origin: center top;
+  animation: smoke-rise 0.8s ease-out forwards;
+}
+
+/* Gradient animado del hero */
+.hero-gradient-bg {
+  background-size: 300% 300%;
+  animation: gradient-shift 8s ease infinite;
+}

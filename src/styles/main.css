@@ -1,0 +1,5 @@
+/* Punto de entrada CSS: importa todos los módulos de estilos en orden */
+@import './variables.css';
+@import './typography.css';
+@import './sections.css';
+@import './animations.css';
