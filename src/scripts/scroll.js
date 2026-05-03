@@ -1,4 +1,4 @@
-// Inicializa GSAP ScrollTrigger para parallax, pins y reveals de secciones
+// GSAP ScrollTrigger: parallax, reveals y timeline. Optimizado para mobile e iOS.
 
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -6,20 +6,32 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 gsap.registerPlugin(ScrollTrigger)
 
 export function init() {
-  // ─── Timeline: números que cuentan ───
+  // Prevenir acumulación de frames perdidos (suaviza en hardware lento)
+  gsap.ticker.lagSmoothing(0)
+
+  // Evitar re-render al aparecer el teclado virtual en iOS/Android
+  ScrollTrigger.config({
+    ignoreMobileResize: true,
+    autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load',
+  })
+
+  const isMobile = window.innerWidth < 640
+
   initTimeline()
-
-  // ─── Galería: reveal en cascada ───
-  initGalleryReveal()
-
-  // ─── Mensajes: fade+slide individuales ───
-  initMessageReveals()
-
-  // ─── Footer: entrada de la firma ───
+  initGalleryReveal(isMobile)
+  initMessageReveals(isMobile)
   initFooter()
-
-  // ─── Divisores de sección ───
   initDividers()
+
+  // Refresh tras carga completa (fuentes, imágenes)
+  window.addEventListener('load', () => {
+    ScrollTrigger.refresh()
+  })
+
+  // Refresh al orientar el dispositivo
+  window.addEventListener('orientationchange', () => {
+    setTimeout(() => ScrollTrigger.refresh(), 300)
+  })
 }
 
 function initTimeline() {
@@ -30,109 +42,110 @@ function initTimeline() {
 
   const endAge = parseInt(counter.dataset.age || '0', 10)
 
-  // Pin de la sección sticky (GSAP refuerza el native sticky)
   ScrollTrigger.create({
     trigger: section,
     start: 'top top',
     end: 'bottom bottom',
-    pin: false, // el sticky lo maneja CSS
+    invalidateOnRefresh: true,
     onUpdate: self => {
-      const progress = self.progress
+      const p = self.progress
 
-      // Número que sube de 0 a endAge
-      const val = Math.round(progress * endAge)
-      counter.textContent = val
+      // Número que sube de 0 a endAge con ease suave
+      const eased = p < 0.5 ? 2 * p * p : -1 + (4 - 2 * p) * p
+      counter.textContent = Math.round(eased * endAge)
 
-      // Cambiar mensaje según tramos
-      const msgIndex = Math.min(Math.floor(progress * msgs.length), msgs.length - 1)
-      msgs.forEach((m, i) => {
-        m.classList.toggle('active', i === msgIndex)
-      })
+      // Mensaje activo según tramo
+      const idx = Math.min(Math.floor(p * msgs.length), msgs.length - 1)
+      msgs.forEach((m, i) => m.classList.toggle('active', i === idx))
     }
   })
 
-  // Parallax en los elementos decorativos del timeline
-  gsap.to('.timeline-deco', {
-    yPercent: -20,
-    ease: 'none',
-    scrollTrigger: {
-      trigger: section,
-      start: 'top bottom',
-      end: 'bottom top',
-      scrub: true,
-    }
-  })
+  // Parallax decorativo solo en desktop
+  if (window.innerWidth >= 1024) {
+    gsap.to('.timeline-deco', {
+      yPercent: -18,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: section,
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: 1.5,
+        invalidateOnRefresh: true,
+      }
+    })
+  }
 }
 
-function initGalleryReveal() {
-  const cards = document.querySelectorAll('.polaroid')
-  if (!cards.length) return
-
-  gsap.fromTo(cards,
-    { opacity: 0, y: 50, rotate: (i) => (i % 2 === 0 ? -3 : 3) },
-    {
-      opacity: 1,
-      y: 0,
-      rotate: (i) => (i % 2 === 0 ? -1.5 : 1.2),
-      duration: 0.8,
-      stagger: 0.12,
-      ease: 'power3.out',
-      scrollTrigger: {
-        trigger: '.gallery-grid',
-        start: 'top 80%',
-        toggleActions: 'play none none none',
-      }
-    }
-  )
-
-  // Header de la galería
+function initGalleryReveal(isMobile) {
+  // Header
   gsap.from('.gallery-title', {
     opacity: 0,
-    y: 30,
+    y: isMobile ? 20 : 35,
     duration: 0.7,
-    ease: 'power2.out',
-    scrollTrigger: {
-      trigger: '.gallery-header',
-      start: 'top 85%',
-    }
+    ease: 'power3.out',
+    scrollTrigger: { trigger: '.gallery-header', start: 'top 88%' }
   })
 
   gsap.from('.gallery-subtitle', {
     opacity: 0,
-    y: 20,
-    duration: 0.6,
-    delay: 0.15,
+    y: isMobile ? 12 : 20,
+    duration: 0.55,
+    delay: 0.12,
     ease: 'power2.out',
-    scrollTrigger: {
-      trigger: '.gallery-header',
-      start: 'top 85%',
-    }
+    scrollTrigger: { trigger: '.gallery-header', start: 'top 88%' }
+  })
+
+  // Cards con ScrollTrigger.batch para mejor rendimiento
+  ScrollTrigger.batch('.polaroid', {
+    onEnter: batch => {
+      gsap.fromTo(batch,
+        {
+          opacity: 0,
+          y: isMobile ? 30 : 50,
+          scale: 0.95,
+          rotate: (i) => (i % 2 === 0 ? -3 : 3),
+        },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          rotate: (i) => {
+            const base = [- 1.5, 1.2, -0.5, 1.8, -1.0, 0.8]
+            return base[parseInt(batch[i]?.dataset?.index || i) % base.length] ?? -1.5
+          },
+          duration: isMobile ? 0.6 : 0.8,
+          stagger: isMobile ? 0.08 : 0.12,
+          ease: 'power3.out',
+          overwrite: true,
+        }
+      )
+    },
+    start: 'top 90%',
+    once: true,
   })
 }
 
-function initMessageReveals() {
+function initMessageReveals(isMobile) {
   const items = document.querySelectorAll('.message-item')
   if (!items.length) return
 
   items.forEach((item, i) => {
-    const direction = i % 2 === 0 ? 1 : -1
+    const dir    = i % 2 === 0 ? 1 : -1
+    const xDist  = isMobile ? 18 : 40
 
     gsap.fromTo(item,
-      {
-        opacity: 0,
-        x: direction * 40,
-        filter: 'blur(4px)',
-      },
+      { opacity: 0, x: dir * xDist, filter: 'blur(3px)' },
       {
         opacity: 1,
         x: 0,
         filter: 'blur(0px)',
-        duration: 0.9,
+        duration: isMobile ? 0.7 : 0.95,
         ease: 'power3.out',
         scrollTrigger: {
           trigger: item,
-          start: 'top 80%',
+          start: 'top 88%',
           toggleActions: 'play none none none',
+          invalidateOnRefresh: true,
         }
       }
     )
@@ -140,50 +153,30 @@ function initMessageReveals() {
 }
 
 function initFooter() {
-  gsap.to('.footer-signature', {
-    opacity: 1,
-    y: 0,
-    duration: 1,
-    ease: 'power2.out',
+  const tl = gsap.timeline({
     scrollTrigger: {
       trigger: '.section-footer',
-      start: 'top 80%',
+      start: 'top 82%',
+      once: true,
     }
   })
 
-  gsap.from('.footer-message', {
-    opacity: 0,
-    y: 20,
-    duration: 0.7,
-    ease: 'power2.out',
-    scrollTrigger: {
-      trigger: '.section-footer',
-      start: 'top 85%',
-    }
-  })
-
-  gsap.from('.footer-bow', {
-    opacity: 0,
-    scale: 0.5,
-    duration: 0.8,
-    ease: 'back.out(1.7)',
-    scrollTrigger: {
-      trigger: '.section-footer',
-      start: 'top 85%',
-    }
-  })
+  tl.from('.footer-bow',       { opacity: 0, scale: 0.4, duration: 0.6, ease: 'back.out(2)' })
+    .from('.footer-message',   { opacity: 0, y: 16, duration: 0.5, ease: 'power2.out' }, '-=0.2')
+    .to  ('.footer-signature', { opacity: 1, y: 0,  duration: 0.9, ease: 'power3.out' }, '-=0.1')
 }
 
 function initDividers() {
   document.querySelectorAll('.section-divider').forEach(divider => {
     gsap.from(divider, {
       opacity: 0,
-      scale: 0.8,
-      duration: 0.6,
-      ease: 'back.out(1.5)',
+      scale: 0.75,
+      duration: 0.55,
+      ease: 'back.out(1.8)',
       scrollTrigger: {
         trigger: divider,
-        start: 'top 90%',
+        start: 'top 92%',
+        once: true,
       }
     })
   })

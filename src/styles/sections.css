@@ -11,6 +11,12 @@ body {
   cursor: none;
 }
 
+/* En dispositivos táctiles el cursor se restaura via JS, pero esto cubre el flash inicial */
+@media (hover: none) {
+  body { cursor: auto; }
+  #cursor-dot, #cursor-ring { display: none !important; }
+}
+
 /* Cursor personalizado */
 #cursor-dot {
   position: fixed;
@@ -127,12 +133,13 @@ body {
 
 .hero-name {
   font-family: var(--font-display);
-  font-size: clamp(3.5rem, 12vw, 9rem);
+  font-size: clamp(3rem, 13vw, 9rem);
   font-weight: 900;
   line-height: 0.92;
   color: var(--ink);
   letter-spacing: -0.03em;
-  overflow: hidden;
+  overflow: visible; /* necesario: las letras animan con translateY y blur */
+  will-change: contents;
 }
 
 .hero-name .letter {
@@ -140,6 +147,7 @@ body {
   opacity: 0;
   transform: translateY(20px);
   filter: blur(8px);
+  will-change: transform, opacity, filter;
 }
 
 .hero-subtitle {
@@ -220,6 +228,14 @@ body {
 
 .timeline-scroll-space {
   height: 400vh;
+}
+
+@media (max-width: 640px) {
+  .timeline-scroll-space { height: 240vh; }
+}
+
+@media (min-width: 641px) and (max-width: 1023px) {
+  .timeline-scroll-space { height: 300vh; }
 }
 
 .timeline-inner {
@@ -372,7 +388,9 @@ body {
   position: relative;
   max-width: 260px;
   width: 100%;
-  will-change: transform;
+  will-change: transform, opacity;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .polaroid:nth-child(odd)  { rotate: -1.5deg; }
@@ -449,6 +467,7 @@ body {
 .message-item {
   opacity: 0;
   position: relative;
+  will-change: transform, opacity;
 }
 
 .message-quote-mark {
@@ -508,13 +527,21 @@ body {
   display: flex;
   justify-content: center;
   margin: 0 auto;
-  max-width: 280px;
+  max-width: 300px;
+  touch-action: manipulation;
 }
 
 .cake-container svg {
   width: 100%;
   height: auto;
   overflow: visible;
+}
+
+/* Asegurar que los grupos de velas sean claramente interactivos en mobile */
+.candle-group {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  cursor: pointer;
 }
 
 .wish-text-wrap {
@@ -580,10 +607,14 @@ body {
 
 .footer-signature {
   font-family: var(--font-accent);
-  font-size: clamp(2rem, 5vw, 3rem);
+  font-size: clamp(1.25rem, 4vw, 2.5rem);
   color: var(--pearl);
   opacity: 0;
   transform: translateY(10px);
+  line-height: 1.4;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 0 var(--space-4);
 }
 
 .footer-hearts {
@@ -613,6 +644,33 @@ body {
   .messages-container { gap: var(--space-16); }
   .message-quote-mark { font-size: 3.5rem; }
   .deco-line { width: 40px; }
+
+  /* Galería: columna única en pantallas muy pequeñas */
+  .gallery-grid {
+    grid-template-columns: 1fr;
+    max-width: 260px;
+  }
+
+  /* Hero: reducir padding lateral */
+  .section-hero {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+  }
+
+  /* Timeline: número ligeramente más pequeño */
+  .timeline-number {
+    font-size: clamp(4rem, 18vw, 9rem);
+  }
+
+  /* Wish: texto de instrucción más pequeño */
+  .wish-instruction { font-size: 0.75rem; }
+}
+
+@media (min-width: 400px) and (max-width: 640px) {
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 100%;
+  }
 }
 
 @media (min-width: 1024px) {

@@ -1,147 +1,162 @@
-// Micro-interacciones con física natural usando Popmotion springs en hover y drag
+// Micro-interacciones con Popmotion: springs en hover (desktop) y tap (mobile)
 
 import { animate } from 'popmotion'
 
+const isTouch = window.matchMedia('(hover: none)').matches
+
 export function init() {
-  initPolaroidHover()
-  initButtonHover()
+  initPolaroidInteractions()
+  if (!isTouch) initButtonHover()
   initScrollArrow()
 }
 
-function springTo({ el, prop, from, to, stiffness = 400, damping = 28, mass = 1 }) {
-  return animate({
-    from,
-    to,
-    type: 'spring',
-    stiffness,
-    damping,
-    mass,
-    onUpdate: v => {
-      if (prop === 'scale') {
-        el.style.transform = `scale(${v}) rotate(${el.dataset.baseRotate || '0'}deg)`
-      } else if (prop === 'y') {
-        el.style.transform = `translateY(${v}px)`
-      }
-    }
-  })
-}
+// ─── Galería: hover en desktop, tap-flash en mobile ───────────────────────────
 
-function initPolaroidHover() {
+function initPolaroidInteractions() {
   const cards = document.querySelectorAll('.polaroid')
 
   cards.forEach(card => {
-    // Guardar la rotación base del CSS
-    const style  = window.getComputedStyle(card)
-    const matrix = new DOMMatrix(style.transform)
-    const baseRot = Math.round(Math.atan2(matrix.b, matrix.a) * (180 / Math.PI))
+    // Leer rotación base aplicada por CSS
+    const style    = window.getComputedStyle(card)
+    const matrix   = new DOMMatrix(style.transform)
+    const baseRot  = Math.round(Math.atan2(matrix.b, matrix.a) * (180 / Math.PI))
     card.dataset.baseRotate = baseRot
 
-    let currentScale = 1
+    if (isTouch) {
+      // Mobile: flash de escala en tap
+      card.addEventListener('touchstart', () => springFlash(card, baseRot), { passive: true })
+    } else {
+      // Desktop: hover con spring + tilt 3D
+      let currentScale = 1
+      let scaleAnim
 
-    const applySpring = (to) => {
-      animate({
-        from: currentScale,
-        to,
-        type: 'spring',
-        stiffness: 350,
-        damping: 25,
-        mass: 0.8,
-        onUpdate: v => {
-          currentScale = v
-          card.style.transform = `scale(${v}) rotate(${baseRot}deg)`
-          card.style.zIndex    = v > 1 ? '10' : ''
-          card.style.boxShadow = v > 1
-            ? `6px 6px 2px rgba(42,30,37,0.12), 0 16px 40px rgba(42,30,37,0.18)`
-            : ''
-        }
+      const applySpring = to => {
+        if (scaleAnim) scaleAnim.stop()
+        scaleAnim = animate({
+          from: currentScale,
+          to,
+          type: 'spring',
+          stiffness: 320,
+          damping: 22,
+          mass: 0.8,
+          onUpdate: v => {
+            currentScale = v
+            card.style.transform = `scale(${v}) rotate(${baseRot}deg)`
+            card.style.zIndex    = v > 1 ? '10' : ''
+            card.style.boxShadow = v > 1
+              ? '6px 8px 0 rgba(42,30,37,0.10), 0 20px 40px rgba(42,30,37,0.16)'
+              : ''
+          }
+        })
+      }
+
+      card.addEventListener('mouseenter', () => applySpring(1.055))
+      card.addEventListener('mouseleave', () => {
+        applySpring(1)
+        card.style.transform = ''
+      })
+
+      card.addEventListener('mousemove', e => {
+        const rect = card.getBoundingClientRect()
+        const cx = rect.left + rect.width  / 2
+        const cy = rect.top  + rect.height / 2
+        const dx = (e.clientX - cx) / (rect.width  / 2)
+        const dy = (e.clientY - cy) / (rect.height / 2)
+        card.style.transform = `scale(${currentScale}) rotate(${baseRot}deg) perspective(700px) rotateX(${-dy * 5}deg) rotateY(${dx * 5}deg)`
       })
     }
-
-    card.addEventListener('mouseenter', () => applySpring(1.06))
-    card.addEventListener('mouseleave', () => applySpring(1.0))
-
-    // Tilt 3D suave con el movimiento del mouse
-    card.addEventListener('mousemove', e => {
-      const rect = card.getBoundingClientRect()
-      const cx = rect.left + rect.width  / 2
-      const cy = rect.top  + rect.height / 2
-      const dx = (e.clientX - cx) / (rect.width  / 2)
-      const dy = (e.clientY - cy) / (rect.height / 2)
-
-      card.style.transform = `scale(${currentScale}) rotate(${baseRot}deg) perspective(600px) rotateX(${-dy * 6}deg) rotateY(${dx * 6}deg)`
-    })
-
-    card.addEventListener('mouseleave', () => {
-      card.style.transform = ''
-    })
   })
 }
 
-function initButtonHover() {
-  const btns = document.querySelectorAll('button, a, [role="button"]')
+function springFlash(el, baseRot) {
+  animate({
+    from: 1,
+    to: 1.05,
+    type: 'spring',
+    stiffness: 450,
+    damping: 20,
+    mass: 0.7,
+    onUpdate: v => {
+      el.style.transform = `scale(${v}) rotate(${baseRot}deg)`
+    },
+    onComplete: () => {
+      animate({
+        from: 1.05,
+        to: 1,
+        type: 'spring',
+        stiffness: 350,
+        damping: 28,
+        onUpdate: v => {
+          el.style.transform = `scale(${v}) rotate(${baseRot}deg)`
+        }
+      })
+    }
+  })
+}
 
-  btns.forEach(btn => {
-    let scaleAnim
+// ─── Botones: hover con spring (solo desktop) ────────────────────────────────
+
+function initButtonHover() {
+  document.querySelectorAll('[role="button"]:not(.candle-group)').forEach(btn => {
+    let anim
 
     btn.addEventListener('mouseenter', () => {
-      if (scaleAnim) scaleAnim.stop()
-      scaleAnim = animate({
+      if (anim) anim.stop()
+      anim = animate({
         from: 1,
         to: 1.04,
         type: 'spring',
         stiffness: 500,
-        damping: 30,
-        onUpdate: v => {
-          btn.style.transform = `scale(${v})`
-        }
+        damping: 28,
+        onUpdate: v => { btn.style.transform = `scale(${v})` }
       })
     })
 
     btn.addEventListener('mouseleave', () => {
-      if (scaleAnim) scaleAnim.stop()
-      scaleAnim = animate({
+      if (anim) anim.stop()
+      anim = animate({
         from: 1.04,
         to: 1,
         type: 'spring',
         stiffness: 400,
-        damping: 25,
-        onUpdate: v => {
-          btn.style.transform = `scale(${v})`
-        }
+        damping: 26,
+        onUpdate: v => { btn.style.transform = `scale(${v})` }
       })
     })
   })
 }
+
+// ─── Indicador de scroll: bounce suave ───────────────────────────────────────
 
 function initScrollArrow() {
   const indicator = document.querySelector('.scroll-indicator')
   if (!indicator) return
 
-  let y = 0
-  let dir = 1
-  let raf
+  let active = true
 
   function bounce() {
+    if (!active) return
     animate({
       from: 0,
-      to: 8,
+      to: 7,
       type: 'spring',
-      stiffness: 200,
-      damping: 12,
+      stiffness: 180,
+      damping: 10,
       onUpdate: v => {
         indicator.style.transform = `translateX(-50%) translateY(${v}px)`
       },
       onComplete: () => {
+        if (!active) return
         animate({
-          from: 8,
+          from: 7,
           to: 0,
           type: 'spring',
           stiffness: 200,
-          damping: 16,
+          damping: 18,
           onUpdate: v => {
             indicator.style.transform = `translateX(-50%) translateY(${v}px)`
           },
-          onComplete: bounce
+          onComplete: () => setTimeout(bounce, 400)
         })
       }
     })
@@ -149,10 +164,15 @@ function initScrollArrow() {
 
   bounce()
 
-  // Ocultar al hacer scroll
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 100) {
+  // Fade al hacer scroll
+  const onScroll = () => {
+    if (window.scrollY > 80) {
+      active = false
+      indicator.style.transition = 'opacity 0.4s ease'
       indicator.style.opacity = '0'
+      window.removeEventListener('scroll', onScroll)
     }
-  }, { passive: true })
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true })
 }

@@ -52,6 +52,8 @@ function buildCakeSVG() {
           <ellipse cx="${cx + 2}" cy="56" rx="2.5" ry="3.5" fill="#C4B4BA" opacity="0"/>
           <ellipse cx="${cx}" cy="50" rx="2" ry="3" fill="#C4B4BA" opacity="0"/>
         </g>
+        <!-- Área táctil expandida (invisible, mínimo 44px para mobile) -->
+        <rect x="${cx - 22}" y="48" width="44" height="60" fill="transparent"/>
       </g>`
   }).join('')
 
@@ -176,6 +178,8 @@ function bindCandleClicks() {
         group.style.cursor = 'default'
       }
 
+      // touchend evita el delay de 300ms del click en mobile
+      group.addEventListener('touchend', e => { e.preventDefault(); blow() }, { passive: false })
       group.addEventListener('click', blow)
       group.addEventListener('keydown', e => {
         if (e.key === 'Enter' || e.key === ' ') blow()

@@ -12,20 +12,26 @@
 /* ─── Keyframes ─── */
 
 @keyframes float {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50%       { transform: translateY(-12px) rotate(3deg); }
+  0%   { transform: translateZ(0) translateY(0px) rotate(0deg); }
+  30%  { transform: translateZ(0) translateY(-9px) rotate(2deg); }
+  60%  { transform: translateZ(0) translateY(-5px) rotate(-1deg); }
+  100% { transform: translateZ(0) translateY(0px) rotate(0deg); }
 }
 
 @keyframes floatAlt {
-  0%, 100% { transform: translateY(-6px) rotate(-2deg); }
-  50%       { transform: translateY(6px) rotate(2deg); }
+  0%   { transform: translateZ(0) translateY(-4px) rotate(-1.5deg); }
+  40%  { transform: translateZ(0) translateY(6px) rotate(1.5deg); }
+  70%  { transform: translateZ(0) translateY(2px) rotate(-0.5deg); }
+  100% { transform: translateZ(0) translateY(-4px) rotate(-1.5deg); }
 }
 
 @keyframes flame-flicker {
-  0%, 100% { transform: scaleX(1) scaleY(1) rotate(-1deg); opacity: 1; }
-  25%      { transform: scaleX(0.9) scaleY(1.06) rotate(1deg); opacity: 0.92; }
-  50%      { transform: scaleX(1.08) scaleY(0.94) rotate(-2deg); opacity: 1; }
-  75%      { transform: scaleX(0.95) scaleY(1.04) rotate(1deg); opacity: 0.95; }
+  0%   { transform: scaleX(1)    scaleY(1)    rotate(-1deg);  opacity: 1;    }
+  20%  { transform: scaleX(0.88) scaleY(1.08) rotate(1.5deg); opacity: 0.90; }
+  40%  { transform: scaleX(1.10) scaleY(0.92) rotate(-2deg);  opacity: 1;    }
+  60%  { transform: scaleX(0.94) scaleY(1.06) rotate(1deg);   opacity: 0.93; }
+  80%  { transform: scaleX(1.05) scaleY(0.96) rotate(-1deg);  opacity: 0.97; }
+  100% { transform: scaleX(1)    scaleY(1)    rotate(-1deg);  opacity: 1;    }
 }
 
 @keyframes smoke-rise {
@@ -61,13 +67,13 @@
 }
 
 @keyframes fade-up {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateZ(0) translateY(20px); }
+  to   { opacity: 1; transform: translateZ(0) translateY(0); }
 }
 
 @keyframes blur-in {
-  from { opacity: 0; filter: blur(8px); }
-  to   { opacity: 1; filter: blur(0); }
+  from { opacity: 0; filter: blur(6px); transform: translateZ(0); }
+  to   { opacity: 1; filter: blur(0);   transform: translateZ(0); }
 }
 
 /* ─── Clases utilitarias de animación ─── */

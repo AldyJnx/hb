@@ -67,21 +67,23 @@ function animateBow() {
   anime({
     targets: '.hero-bow-top path, .hero-bow-top circle',
     strokeDashoffset: [anime.setDashoffset, 0],
-    duration: 1000,
-    delay: anime.stagger(120),
-    easing: 'easeInOutSine',
+    duration: 900,
+    delay: anime.stagger(100),
+    easing: 'cubicBezier(0.4, 0, 0.2, 1)',
   })
 }
 
 function animateName(name) {
+  const isMobile = window.innerWidth < 640
+
   anime({
     targets: '.hero-name .letter',
-    opacity:      [0, 1],
-    translateY:   [20, 0],
-    filter:       ['blur(8px)', 'blur(0px)'],
-    duration:     700,
-    delay:        anime.stagger(60, { start: 200 }),
-    easing:       'easeOutExpo',
+    opacity:    [0, 1],
+    translateY: [isMobile ? 14 : 22, 0],
+    filter:     ['blur(6px)', 'blur(0px)'],
+    duration:   isMobile ? 560 : 680,
+    delay:      anime.stagger(isMobile ? 45 : 58, { start: 150 }),
+    easing:     'cubicBezier(0.16, 1, 0.3, 1)',
   })
 }
 
