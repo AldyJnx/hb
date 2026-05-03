@@ -897,3 +897,71 @@ body {
   .section-gallery { padding: var(--space-32) var(--space-8); }
   .section-messages { padding: var(--space-32) var(--space-8); }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   HELLO KITTY COMPANION
+═══════════════════════════════════════════════════════════════ */
+
+#kitty-companion {
+  position: fixed;
+  right: clamp(10px, 2.5vw, 22px);
+  bottom: clamp(14px, 3.5vh, 32px);
+  z-index: 50;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  /* Entrada suave al cargar */
+  opacity: 0;
+  animation: kitty-enter 0.9s 2.8s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+
+@keyframes kitty-enter {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* Corazón (encima de Kitty) */
+.kitty-heart-wrap {
+  width: clamp(48px, 6.5vw, 74px);
+  transform-origin: center bottom;
+}
+
+.kitty-heart-wrap svg {
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 4px 12px rgba(255,23,68,0.35));
+}
+
+/* Wrapper del SVG de Kitty */
+.kitty-svg-wrap {
+  width: clamp(68px, 9vw, 108px);
+}
+
+.kitty-svg-wrap svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  /* Sombra suave para separar del fondo */
+  filter: drop-shadow(0 6px 18px rgba(42,30,37,0.12));
+}
+
+/* Mobile: algo más pequeño y semi-transparente para no tapar contenido */
+@media (max-width: 640px) {
+  #kitty-companion {
+    right: 8px;
+    bottom: 12px;
+    opacity: 0;
+    animation: kitty-enter 0.9s 2.8s cubic-bezier(0.16,1,0.3,1) forwards;
+  }
+
+  .kitty-svg-wrap  { width: 64px; }
+  .kitty-heart-wrap { width: 44px; }
+}
+
+/* Pantallas muy pequeñas: reducir más */
+@media (max-width: 360px) {
+  .kitty-svg-wrap  { width: 52px; }
+  .kitty-heart-wrap { width: 38px; }
+}

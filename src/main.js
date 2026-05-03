@@ -25,6 +25,7 @@ import { init as initGallery }   from './components/gallery.js'
 import { init as initMessages }  from './components/messages-section.js'
 import { init as initWish }      from './components/wish.js'
 import { init as initFooter }    from './components/footer.js'
+import { init as initKitty }     from './components/kitty-companion.js'
 
 // Scripts de comportamiento
 import { init as initIntro }         from './scripts/intro.js'
@@ -36,9 +37,10 @@ import { init as initCursor }        from './scripts/cursor.js'
 
 // ─── Bootstrap ───────────────────────────────────────────────────────────────
 
-// 1. Cursor y partículas: inmediato
+// 1. Cursor, partículas y companion
 initCursor()
 initParticles()
+initKitty()
 
 // 2. Componentes de contenido: construyen el DOM antes de animar
 initGallery()
